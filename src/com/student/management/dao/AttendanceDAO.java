@@ -24,6 +24,30 @@ public class AttendanceDAO {
         }
     }
 
+    public void printAttendanceByCourse(int courseId) {
+        String sql = "SELECT student_id, status, COUNT(*) as days " +
+                "FROM attendance WHERE course_id = ? " +
+                "GROUP BY student_id, status";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, courseId);
+            ResultSet rs = stmt.executeQuery();
+
+            System.out.println("Attendance Summary for Course ID: " + courseId);
+            while (rs.next()) {
+                int studentId = rs.getInt("student_id");
+                String status = rs.getString("status");
+                int days = rs.getInt("days");
+                System.out.println("Student ID: " + studentId + " | " + status + ": " + days + " days");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<Attendance> getAttendanceByStudent(int studentId) {
         List<Attendance> list = new ArrayList<>();
         String sql = "SELECT * FROM attendance WHERE student_id = ?";

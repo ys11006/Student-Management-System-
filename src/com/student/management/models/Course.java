@@ -15,6 +15,10 @@ public class Course {
         this.fees = fees;
     }
 
+    public Course() {
+
+    }
+
     // Getters and Setters
     public int getId() {
         return id;

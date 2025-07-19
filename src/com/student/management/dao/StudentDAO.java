@@ -9,6 +9,27 @@ import java.util.List;
 
 public class StudentDAO {
 
+    public Student getStudentByUserId(int userId) {
+        String sql = "SELECT * FROM students WHERE user_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Student(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getDate("dob").toLocalDate()
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     public void addStudent(Student student) {
         String sql = "INSERT INTO students(name, email, dob) VALUES (?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();

@@ -1,6 +1,7 @@
 package com.student.management.models;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class Student {
     private int id;
@@ -15,6 +16,9 @@ public class Student {
         this.name = name;
         this.email = email;
         this.dob = dob;
+    }
+
+    public Student(int id, String name, String email, LocalDate dob) {
     }
 
     // Getters and Setters
