@@ -6,6 +6,8 @@ import com.student.management.dao.ResultDAO;
 import com.student.management.models.Attendance;
 import com.student.management.models.Feedback;
 import com.student.management.models.Result;
+import java.time.LocalDateTime;
+
 
 import java.sql.Date;
 import java.util.List;
@@ -45,7 +47,8 @@ public class StudentMenu {
                     scanner.nextLine();
                     System.out.print("Enter Feedback Text: ");
                     String text = scanner.nextLine();
-                    Feedback fb = new Feedback(0, studentId, courseId, text, new Date(System.currentTimeMillis()));
+                    Feedback fb = new Feedback(0, studentId, courseId, text, LocalDateTime.now());
+
                     feedbackDAO.submitFeedback(fb);
                 }
                 case 0 -> {

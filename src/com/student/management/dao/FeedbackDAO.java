@@ -29,12 +29,11 @@ public class FeedbackDAO {
     // ✅ Admin views all feedback with joined student + course info
     public List<Feedback> getAllFeedback() {
         List<Feedback> list = new ArrayList<>();
-        String sql = "SELECT f.id, f.feedback_text, f.submitted_on, " +
+        String sql = "SELECT f.id, f.student_id, f.course_id, f.feedback_text, f.submitted_on, " +
                 "s.name AS student_name, c.name AS course_name " +
                 "FROM feedback f " +
                 "JOIN students s ON f.student_id = s.id " +
-                "JOIN courses c ON f.course_id = c.id " +
-                "ORDER BY f.submitted_on DESC";
+                "JOIN courses c ON f.course_id = c.id";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -43,16 +42,19 @@ public class FeedbackDAO {
             while (rs.next()) {
                 Feedback fb = new Feedback();
                 fb.setId(rs.getInt("id"));
+                fb.setStudentId(rs.getInt("student_id"));      // ✅ Correctly set
+                fb.setCourseId(rs.getInt("course_id"));        // ✅ Correctly set
                 fb.setFeedbackText(rs.getString("feedback_text"));
                 fb.setSubmittedOn(rs.getTimestamp("submitted_on").toLocalDateTime());
                 fb.setStudentName(rs.getString("student_name"));
                 fb.setCourseName(rs.getString("course_name"));
                 list.add(fb);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return list;
     }
+
 }

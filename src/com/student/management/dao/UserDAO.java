@@ -28,22 +28,41 @@ public class UserDAO {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
-            stmt.setString(2, password); // plain text; hashed in SQL
+            stmt.setString(2, password);
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new User(
                         rs.getInt("id"),
                         rs.getString("username"),
-                        null, // don't return password
+                        null,
                         rs.getString("role")
                 );
-            } else {
-                System.out.println("❌ Invalid username or password.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        // 🔁 Fallback: check in students table using studentId and DOB
+        try {
+            int studentId = Integer.parseInt(username); // username = studentId
+            String sql2 = "SELECT * FROM students WHERE id = ? AND dob = ?";
+            try (Connection conn = DBConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql2)) {
+                stmt.setInt(1, studentId);
+                stmt.setDate(2, Date.valueOf(password)); // password = dob in yyyy-mm-dd
+
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    return new User(studentId, String.valueOf(studentId), null, "student");
+                }
+            }
+        } catch (Exception e) {
+            // Ignore fallback login error
+        }
+
+        System.out.println("❌ Invalid username or password.");
         return null;
     }
+
 }

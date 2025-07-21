@@ -91,4 +91,27 @@ public class StudentDAO {
             e.printStackTrace();
         }
     }
+
+    public Student getStudentById(int studentId) {
+        String sql = "SELECT * FROM students WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, studentId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new Student(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getDate("dob") // Assuming dob is stored as java.time.LocalDate in your model
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // student not found
+    }
+
 }
